@@ -1,3 +1,7 @@
+// Test automatic deployment
+// This is a test change to verify Vercel auto-deployment
+import React from 'react';
+
 const Hero = () => {
      return (
           <section className="hero">
