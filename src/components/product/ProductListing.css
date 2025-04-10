@@ -1,0 +1,141 @@
+.product-listing {
+     max-width: 1200px;
+     margin: 2rem auto;
+     padding: 2rem;
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 2rem;
+     background-color: white;
+     border-radius: 12px;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-images {
+     position: relative;
+     aspect-ratio: 1;
+     border-radius: 8px;
+     overflow: hidden;
+}
+
+.product-main-image {
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+}
+
+.product-image-placeholder {
+     width: 100%;
+     height: 100%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     background-color: #f3f4f6;
+     color: #6b7280;
+     font-size: 1.1rem;
+}
+
+.product-info {
+     display: flex;
+     flex-direction: column;
+     gap: 1.5rem;
+}
+
+.product-title {
+     font-size: 2rem;
+     font-weight: 700;
+     color: #1a1a1a;
+     margin: 0;
+}
+
+.product-price {
+     font-size: 1.5rem;
+     font-weight: 600;
+     color: #3b82f6;
+     margin: 0;
+}
+
+.product-description {
+     font-size: 1.1rem;
+     line-height: 1.6;
+     color: #4b5563;
+     margin: 0;
+}
+
+.product-details {
+     display: flex;
+     flex-direction: column;
+     gap: 1rem;
+     padding: 1.5rem;
+     background-color: #f9fafb;
+     border-radius: 8px;
+}
+
+.detail-item {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+
+.detail-label {
+     font-weight: 600;
+     color: #4b5563;
+}
+
+.detail-value {
+     color: #6b7280;
+}
+
+.seller-info {
+     margin-top: auto;
+     padding-top: 1.5rem;
+     border-top: 1px solid #e5e7eb;
+}
+
+.seller-info h3 {
+     margin: 0 0 1rem 0;
+     font-size: 1.25rem;
+     color: #1a1a1a;
+}
+
+.seller-name {
+     margin: 0 0 1rem 0;
+     font-size: 1.1rem;
+     color: #4b5563;
+}
+
+.contact-seller-btn {
+     width: 100%;
+     padding: 1rem;
+     background-color: #3b82f6;
+     color: white;
+     border: none;
+     border-radius: 8px;
+     font-size: 1.1rem;
+     font-weight: 600;
+     cursor: pointer;
+     transition: background-color 0.2s ease;
+}
+
+.contact-seller-btn:hover {
+     background-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+     .product-listing {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+          margin: 1rem;
+     }
+
+     .product-title {
+          font-size: 1.5rem;
+     }
+
+     .product-price {
+          font-size: 1.25rem;
+     }
+
+     .product-description {
+          font-size: 1rem;
+     }
+}
