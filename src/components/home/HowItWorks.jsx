@@ -1,46 +1,36 @@
-const steps = [
-     {
-          id: 1,
-          number: "1",
-          title: "List Your Item",
-          description: "Take a photo, add details and set your price. Your item will be visible to all students on campus."
-     },
-     {
-          id: 2,
-          number: "2",
-          title: "Connect & Chat",
-          description: "Interested buyers will message you. Arrange a safe on-campus meeting point to complete the exchange."
-     },
-     {
-          id: 3,
-          number: "3",
-          title: "Exchange & Review",
-          description: "Complete the transaction in person and leave feedback to build trust in the community."
-     }
-];
+import React from 'react';
+import './HowItWorks.css';
 
 const HowItWorks = () => {
+     const steps = [
+          {
+               title: 'List Your Items',
+               description: 'Create a detailed listing with photos, description, and price.',
+               icon: '📝'
+          },
+          {
+               title: 'Connect with Buyers',
+               description: 'Interested buyers can view your contact information and reach out directly.',
+               icon: '🤝'
+          },
+          {
+               title: 'Make the Sale',
+               description: 'Arrange a safe meeting place and complete your transaction.',
+               icon: '💰'
+          }
+     ];
+
      return (
           <section className="how-it-works">
-               <div className="how-it-works-content">
-                    <div className="section-header">
-                         <h2>How CampusKart Works</h2>
-                         <p>Simple steps to buy or sell items within your campus community</p>
-                    </div>
-
-                    <div className="steps-container">
-                         {steps.map((step) => (
-                              <div key={step.id} className="step-card">
-                                   <div className="step-number">{step.number}</div>
-                                   <h3>{step.title}</h3>
-                                   <p>{step.description}</p>
-                              </div>
-                         ))}
-                    </div>
-
-                    <div className="learn-more">
-                         <button className="learn-more-button">Learn More</button>
-                    </div>
+               <h2>How It Works</h2>
+               <div className="steps-container">
+                    {steps.map((step, index) => (
+                         <div key={index} className="step">
+                              <div className="step-icon">{step.icon}</div>
+                              <h3>{step.title}</h3>
+                              <p>{step.description}</p>
+                         </div>
+                    ))}
                </div>
           </section>
      );

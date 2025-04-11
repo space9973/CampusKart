@@ -13,6 +13,7 @@ import ForgotPassword from './components/auth/ForgotPassword'
 import SellProduct from './components/sell/SellProduct'
 import About from './components/about/About'
 import Products from './components/products/Products'
+import Contact from './components/contact/Contact'
 // import Dashboard from './components/dashboard/Dashboard'
 import './components/home/Categories.css'
 import './components/home/ExploreProducts.css'
@@ -21,6 +22,7 @@ import './components/footer/Footer.css'
 import './components/auth/auth.css'
 import './components/about/About.css'
 import './components/products/Products.css'
+import './components/contact/Contact.css'
 import Footer from './components/footer/Footer'
 
 function App() {
@@ -44,6 +46,7 @@ function App() {
             <Route path="/sell" element={<SellProduct />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
           <Footer />
         </div>

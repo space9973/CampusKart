@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import ChatModal from '../chat/ChatModal';
 import './ProductListing.css';
 
 const ProductListing = ({ product }) => {
      const { currentUser } = useAuth();
-     const [isChatOpen, setIsChatOpen] = useState(false);
+     const [showContactInfo, setShowContactInfo] = useState(false);
 
      const handleContactSeller = () => {
           if (!currentUser) {
@@ -13,7 +12,7 @@ const ProductListing = ({ product }) => {
                window.location.href = '/signin';
                return;
           }
-          setIsChatOpen(true);
+          setShowContactInfo(true);
      };
 
      return (
@@ -49,24 +48,21 @@ const ProductListing = ({ product }) => {
                     <div className="seller-info">
                          <h3>Seller Information</h3>
                          <p className="seller-name">{product.sellerName}</p>
-                         <button
-                              className="contact-seller-btn"
-                              onClick={handleContactSeller}
-                         >
-                              Contact Seller
-                         </button>
+                         {showContactInfo ? (
+                              <div className="contact-info">
+                                   <p>Email: {product.sellerEmail}</p>
+                                   {product.sellerPhone && <p>Phone: {product.sellerPhone}</p>}
+                              </div>
+                         ) : (
+                              <button
+                                   className="contact-seller-btn"
+                                   onClick={handleContactSeller}
+                              >
+                                   View Contact Info
+                              </button>
+                         )}
                     </div>
                </div>
-
-               {isChatOpen && (
-                    <ChatModal
-                         isOpen={isChatOpen}
-                         onClose={() => setIsChatOpen(false)}
-                         productId={product.id}
-                         sellerId={product.sellerId}
-                         productName={product.title}
-                    />
-               )}
           </div>
      );
 };

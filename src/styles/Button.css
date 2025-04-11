@@ -1,0 +1,85 @@
+.button {
+     padding: 0.75rem 1.5rem;
+     border-radius: 0.5rem;
+     font-weight: 500;
+     cursor: pointer;
+     transition: all 0.2s ease;
+     border: none;
+     outline: none;
+     position: relative;
+     overflow: hidden;
+}
+
+.button:active {
+     transform: scale(0.98);
+}
+
+.button::after {
+     content: '';
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     width: 0;
+     height: 0;
+     background: rgba(255, 255, 255, 0.2);
+     border-radius: 50%;
+     transform: translate(-50%, -50%);
+     transition: width 0.3s ease, height 0.3s ease;
+}
+
+.button:active::after {
+     width: 200%;
+     height: 200%;
+}
+
+/* Primary Button */
+.primary-button {
+     background-color: #4169E1;
+     color: white;
+}
+
+.primary-button:hover {
+     background-color: #3155b7;
+}
+
+/* Secondary Button */
+.secondary-button {
+     background-color: #f3f4f6;
+     color: #333;
+     border: 1px solid #e5e7eb;
+}
+
+.secondary-button:hover {
+     background-color: #e5e7eb;
+}
+
+/* Success Button */
+.success-button {
+     background-color: #10B981;
+     color: white;
+}
+
+.success-button:hover {
+     background-color: #059669;
+}
+
+/* Danger Button */
+.danger-button {
+     background-color: #EF4444;
+     color: white;
+}
+
+.danger-button:hover {
+     background-color: #DC2626;
+}
+
+/* Disabled State */
+.button:disabled {
+     opacity: 0.6;
+     cursor: not-allowed;
+}
+
+/* Focus State */
+.button:focus {
+     box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.3);
+}

@@ -1,67 +1,83 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase/config';
+import { useSearchParams } from 'react-router-dom';
+import { books } from '../../DB/books';
+import { electronics } from '../../DB/electronics';
+import { furniture } from '../../DB/furniture';
 import './Products.css';
 
 const Products = () => {
+     const [searchParams, setSearchParams] = useSearchParams();
      const [products, setProducts] = useState([]);
      const [loading, setLoading] = useState(true);
      const [filter, setFilter] = useState('all');
      const [searchQuery, setSearchQuery] = useState('');
      const [sortBy, setSortBy] = useState('newest');
-     const [error, setError] = useState(null);
 
      useEffect(() => {
-          const fetchProducts = async (retryCount = 0) => {
-               try {
-                    console.log('Attempting to fetch products...');
-                    const querySnapshot = await getDocs(collection(db, 'products'));
-                    const productsData = querySnapshot.docs.map(doc => ({
-                         id: doc.id,
-                         ...doc.data()
-                    }));
-                    console.log('Fetched products:', productsData);
-                    setProducts(productsData);
-                    setLoading(false);
-                    setError(null);
-               } catch (error) {
-                    console.error("Error fetching products:", error);
-                    if (retryCount < 3) {
-                         console.log(`Retrying... Attempt ${retryCount + 1}`);
-                         setTimeout(() => fetchProducts(retryCount + 1), 1000 * (retryCount + 1));
-                    } else {
-                         setError("Failed to load products. Please check your internet connection and try again.");
-                         setLoading(false);
-                    }
-               }
-          };
+          // Get search query from URL parameters
+          const urlSearch = searchParams.get('search');
+          if (urlSearch) {
+               setSearchQuery(urlSearch);
 
-          fetchProducts();
-     }, []);
+               // Set appropriate filter based on search query
+               if (urlSearch.toLowerCase().includes('book') || urlSearch.toLowerCase().includes('textbook')) {
+                    setFilter('books');
+               } else if (urlSearch.toLowerCase().includes('electronics') || urlSearch.toLowerCase().includes('laptop')) {
+                    setFilter('electronics');
+               } else if (urlSearch.toLowerCase().includes('furniture')) {
+                    setFilter('furniture');
+               }
+          }
+
+          // Combine all products from different categories
+          const allProducts = [...books, ...electronics, ...furniture];
+
+          // Sort by posted date initially
+          const sortedProducts = allProducts.sort((a, b) => {
+               const dateA = new Date(a.postedDate);
+               const dateB = new Date(b.postedDate);
+               return dateB - dateA;
+          });
+
+          setProducts(sortedProducts);
+          setLoading(false);
+     }, [searchParams]);
+
+     const handleSearchChange = (e) => {
+          const query = e.target.value;
+          setSearchQuery(query);
+          // Update URL with search query
+          if (query) {
+               setSearchParams({ search: query });
+          } else {
+               setSearchParams({});
+          }
+     };
+
+     const handleFilterChange = (newFilter) => {
+          setFilter(newFilter);
+          // Preserve search query in URL when changing filters
+          if (searchQuery) {
+               setSearchParams({ search: searchQuery });
+          }
+     };
 
      const filterProducts = (products) => {
           let filtered = [...products];
-          console.log('Current filter:', filter);
-          console.log('All products before filtering:', filtered);
 
-          // Apply category filter
           if (filter !== 'all') {
-               filtered = filtered.filter(product => {
-                    console.log('Product category:', product.category, 'Filter:', filter);
-                    return product.category?.toLowerCase() === filter.toLowerCase();
-               });
+               filtered = filtered.filter(product =>
+                    product.category?.toLowerCase() === filter.toLowerCase()
+               );
           }
-          console.log('Filtered products:', filtered);
 
-          // Apply search filter
           if (searchQuery) {
                filtered = filtered.filter(product =>
-                    product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     product.description?.toLowerCase().includes(searchQuery.toLowerCase())
                );
           }
 
-          // Apply sorting
           switch (sortBy) {
                case 'priceHigh':
                     filtered.sort((a, b) => b.price - a.price);
@@ -71,8 +87,8 @@ const Products = () => {
                     break;
                case 'newest':
                     filtered.sort((a, b) => {
-                         const dateA = new Date(a.createdAt || 0);
-                         const dateB = new Date(b.createdAt || 0);
+                         const dateA = new Date(a.postedDate);
+                         const dateB = new Date(b.postedDate);
                          return dateB - dateA;
                     });
                     break;
@@ -86,7 +102,7 @@ const Products = () => {
      const filteredProducts = filterProducts(products);
 
      return (
-          <div className="products-page">
+          <div className="products-container">
                <div className="products-header">
                     <h1>Browse Products</h1>
                     <div className="search-bar">
@@ -94,7 +110,8 @@ const Products = () => {
                               type="text"
                               placeholder="Search products..."
                               value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
+                              onChange={handleSearchChange}
+                              className="search-input"
                          />
                     </div>
                </div>
@@ -102,39 +119,37 @@ const Products = () => {
                <div className="filters-section">
                     <div className="category-filters">
                          <button
-                              className={filter === 'all' ? 'active' : ''}
-                              onClick={() => setFilter('all')}
+                              className={`filter-button ${filter === 'all' ? 'active' : ''}`}
+                              onClick={() => handleFilterChange('all')}
                          >
                               All
                          </button>
                          <button
-                              className={filter === 'books' ? 'active' : ''}
-                              onClick={() => setFilter('books')}
+                              className={`filter-button ${filter === 'books' ? 'active' : ''}`}
+                              onClick={() => handleFilterChange('books')}
                          >
                               Books
                          </button>
                          <button
-                              className={filter === 'electronics' ? 'active' : ''}
-                              onClick={() => setFilter('electronics')}
+                              className={`filter-button ${filter === 'electronics' ? 'active' : ''}`}
+                              onClick={() => handleFilterChange('electronics')}
                          >
                               Electronics
                          </button>
                          <button
-                              className={filter === 'furniture' ? 'active' : ''}
-                              onClick={() => setFilter('furniture')}
+                              className={`filter-button ${filter === 'furniture' ? 'active' : ''}`}
+                              onClick={() => handleFilterChange('furniture')}
                          >
                               Furniture
-                         </button>
-                         <button
-                              className={filter === 'other' ? 'active' : ''}
-                              onClick={() => setFilter('other')}
-                         >
-                              Other
                          </button>
                     </div>
 
                     <div className="sort-options">
-                         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                         <select
+                              value={sortBy}
+                              onChange={(e) => setSortBy(e.target.value)}
+                              className="sort-select"
+                         >
                               <option value="newest">Newest First</option>
                               <option value="priceHigh">Price: High to Low</option>
                               <option value="priceLow">Price: Low to High</option>
@@ -142,52 +157,56 @@ const Products = () => {
                     </div>
                </div>
 
-               {loading ? (
-                    <div className="loading">Loading products...</div>
-               ) : error ? (
-                    <div className="error-message">
-                         {error}
-                         <button onClick={() => window.location.reload()}>
-                              Try Again
-                         </button>
-                    </div>
-               ) : filteredProducts.length === 0 ? (
-                    <div className="no-products">
-                         <h2>No products found</h2>
-                         <p>Try adjusting your filters or search query</p>
-                    </div>
-               ) : (
-                    <div className="products-grid">
-                         {filteredProducts.map(product => (
-                              <div key={product.id} className="product-card">
-                                   <div className="product-image">
-                                        <img src={product.imageUrl} alt={product.name} />
-                                        {product.status === 'sold' && (
-                                             <div className="sold-overlay">SOLD</div>
-                                        )}
-                                   </div>
-                                   <div className="product-info">
-                                        <h3>{product.name}</h3>
-                                        <p className="price">${product.price}</p>
-                                        <p className="description">{product.description}</p>
-                                        <div className="product-footer">
-                                             <button
-                                                  className="view-details"
-                                                  onClick={() => window.location.href = `/product/${product.id}`}
-                                             >
-                                                  View Details
-                                             </button>
-                                             {product.status !== 'sold' && (
-                                                  <button className="contact-seller">
-                                                       Contact Seller
-                                                  </button>
+               <div className="products-content">
+                    {loading ? (
+                         <div className="loading-state">
+                              <div className="loading-spinner"></div>
+                              <p>Loading products...</p>
+                         </div>
+                    ) : filteredProducts.length === 0 ? (
+                         <div className="empty-state">
+                              <h2>No products found</h2>
+                              <p>Try adjusting your filters or search query</p>
+                         </div>
+                    ) : (
+                         <div className="products-grid">
+                              {filteredProducts.map(product => (
+                                   <div key={product.id} className="product-card">
+                                        <div className="product-image">
+                                             <img
+                                                  src={product.imageUrl || '/placeholder-image.jpg'}
+                                                  alt={product.title}
+                                                  onError={(e) => {
+                                                       e.target.src = '/placeholder-image.jpg';
+                                                  }}
+                                             />
+                                             {!product.isAvailable && (
+                                                  <div className="sold-overlay">SOLD</div>
                                              )}
                                         </div>
+                                        <div className="product-info">
+                                             <h3>{product.title}</h3>
+                                             <p className="price">₹{product.price.toLocaleString('en-IN')}</p>
+                                             <p className="description">{product.description}</p>
+                                             <div className="product-footer">
+                                                  <button
+                                                       className="view-details-button"
+                                                       onClick={() => window.location.href = `/product/${product.id}`}
+                                                  >
+                                                       View Details
+                                                  </button>
+                                                  {product.isAvailable && (
+                                                       <button className="contact-seller-button">
+                                                            Contact Seller
+                                                       </button>
+                                                  )}
+                                             </div>
+                                        </div>
                                    </div>
-                              </div>
-                         ))}
-                    </div>
-               )}
+                              ))}
+                         </div>
+                    )}
+               </div>
           </div>
      );
 };
